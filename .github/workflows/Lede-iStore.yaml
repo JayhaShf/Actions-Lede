@@ -1,0 +1,99 @@
+name: iStore Openwrt
+
+on:
+  workflow_dispatch:
+    inputs:
+      ssh:
+        description: 'SSH Action'
+        required: false
+        default: 'false'
+  schedule:
+    - cron: 30 4 * * 1,5
+
+env: 
+  # REPO_URL: 
+  # REPO_BRANCH: master
+  FEEDS_CONF: config/feeds.conf.default
+  CONFIG_FILE: config/istore/.config
+  UPLOAD_BIN_DIR: false
+  UPLOAD_FIRMWARE: false
+  UPLOAD_COWTRANSFER: false
+  UPLOAD_WETRANSFER: false
+  UPLOAD_RELEASE: false
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: 检查
+      uses: actions/checkout@main
+
+    - name: 创建环境
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo -E apt-get -qq update
+        sudo -E apt-get -qq install build-essential bc clang flex g++ gawk gcc-multilib gettext \
+        git libncurses5-dev libssl-dev python3-distutils python3-pyelftools libpython3-dev rsync unzip zlib1g-dev swig aria2 jq subversion qemu-utils ccache rename libelf-dev device-tree-compiler libgnutls28-dev
+        sudo -E apt-get -qq purge azure-cli ghc* zulu* llvm* firefox powershell openjdk* dotnet* google* mysql* php* android*
+        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo -E apt-get -qq autoremove --purge
+        sudo -E apt-get -qq clean
+        sudo timedatectl set-timezone "$TZ"
+        sudo mkdir -p /lede
+        sudo chown $USER:$GROUPS /lede
+
+    - name: 下载Lede源码
+      working-directory: /lede
+      run: |
+        df -hT $PWD
+        git clone https://github.com/coolsnowwolf/lede.git openwrt
+        ln -sf /lede/openwrt $GITHUB_WORKSPACE/openwrt
+
+    - name: 覆写插件配置
+      run: |
+        cat /lede/openwrt/feeds.conf.default
+        [ -e $FEEDS_CONF ] && cp -f $FEEDS_CONF /lede/openwrt/feeds.conf.default
+        cat /lede/openwrt/feeds.conf.default
+        cd /lede/openwrt
+        make defconfig
+
+    - name: 更新插件库
+      run: | 
+        cd /lede/openwrt && ./scripts/feeds update -a
+
+    - name: 安装插件库
+      run: | 
+        cd /lede/openwrt && ./scripts/feeds install -a
+
+    - name: 删除冲突插件
+      run: | 
+        rm -rf feeds/smpackage/{base-files,dnsmasq,firewall*,fullconenat,libnftnl,nftables,ppp,opkg,ucl,upx,vsftpd-alt,miniupnpd-iptables,wireless-regdb}
+        
+    - name: 覆写
+      run: |
+        [ -e $CONFIG_FILE ] && cp -f $CONFIG_FILE /lede/openwrt/.config
+        cd /lede/openwrt
+        sed -i 's/192.168.1.1/192.168.3.10/g' package/base-files/files/bin/config_generate
+        sed -i 's/OpenWrt/Jayha/g' package/base-files/files/bin/config_generate
+
+    - name: 编译插件库
+      run: |
+        cd /lede/openwrt
+        make download -j8
+        find dl -size -1024c -exec ls -l {} \;
+        find dl -size -1024c -exec rm -f {} \;
+        make download -j8
+
+    - name: 完成自定义固件
+      run: |
+        cd /lede/openwrt
+        make -j1 V=s
+
+    - name: 上传固件
+      uses: actions/upload-artifact@v4
+      with:
+        name: OpenWrt_firmware
+        path: /lede/openwrt/bin/targets/*/*
