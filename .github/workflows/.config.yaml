@@ -6,7 +6,7 @@ on:
     inputs:
       ssh:
         description: 'SSH Action'
-        required: false
+        required: 'false'
         default: 'false'
 
 env: 
