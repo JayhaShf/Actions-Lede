@@ -18,7 +18,7 @@
         <br />项目地址：<a href="https://github.com/coolsnowwolf/lede">Lede</a></h3>
     <h3>Actions-Openwrt（by:P3TERX）
         <br />项目地址：<a href="https://github.com/P3TERX/Actions-OpenWrt">Actions-Openwrt</a></h3>
-    <h3>如果好用请点一下Fork/Star，谢谢！-~-</h3>
+    <h3>如果好用请点一下Fork & Star，谢谢！-~-</h3>
     <h3>本项目仅供个人学习使用，无任何商业价值。</h3>
 </body>
 </html>
