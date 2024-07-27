@@ -7,7 +7,7 @@ on:
       ssh:
         description: 'SSH Action'
         required: false
-        default: 'false'
+        default: 'true'
 
 env: 
   FEEDS_CONF: config/feeds.conf.default
@@ -104,9 +104,9 @@ jobs:
         bot_token: ${{ secrets.BOT_TOKEN }}
         chat_id: ${{ secrets.CHAT_ID }}
         context: Openwrt Conf
-        method: sendFile # sendDocument、sendMediaGroup
-        path: ./bin/conf/* # Total size does not exceed 2000M
+        method: sendFile
+        path: ./bin/conf/*
         large_file: true
-        api_id: ${{ secrets.API_ID }} # 12345678
-        api_hash: ${{ secrets.API_HASH }} # 01234567890abcdef01234567890abcdef
+        api_id: ${{ secrets.API_ID }}
+        api_hash: ${{ secrets.API_HASH }}
 

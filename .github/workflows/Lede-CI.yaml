@@ -91,11 +91,6 @@ jobs:
       run: |
         cd /lede/openwrt
         make -j1 V=s
-        
-    - name: 打包固件
-      run: |
-        cd /lede/openwrt
-        make -j1 V=s
 
     - name: 转移固件
       run: |
@@ -118,11 +113,8 @@ jobs:
         bot_token: ${{ secrets.BOT_TOKEN }}
         chat_id: ${{ secrets.CHAT_ID }}
         context: OpenWrt Firmware
-        method: sendFile # sendDocument、sendMediaGroup
-        path: ./bin/conf/openwrt.zip # Total size does not exceed 2000M
+        method: sendFile
+        path: ./bin/conf/openwrt.zip
         large_file: true
-        api_id: ${{ secrets.API_ID }} # 12345678
-        api_hash: ${{ secrets.API_HASH }} # 01234567890abcdef01234567890abcdef
-      # api_server: https://example.com/telegram-bot-api_windows_x86
-      # api_server_file_name: telegram-bot-api.exe # default: telegram-bot-api
-      # run_cmd: '.\{fileName} --api-id={api_id} --api-hash={api_hash}'
+        api_id: ${{ secrets.API_ID }}
+        api_hash: ${{ secrets.API_HASH }}
