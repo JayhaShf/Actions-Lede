@@ -107,14 +107,14 @@ jobs:
         name: OpenWrt_firmware
         path: ./bin/conf/openwrt.zip
 
-    - name: Test Post Large File
-      uses: xireiki/channel-post@v1
-      with:
-        bot_token: ${{ secrets.BOT_TOKEN }}
-        chat_id: ${{ secrets.CHAT_ID }}
-        context: OpenWrt Firmware
-        method: sendFile
-        path: ./bin/conf/openwrt.zip
-        large_file: true
-        api_id: ${{ secrets.API_ID }}
-        api_hash: ${{ secrets.API_HASH }}
+#    - name: Test Post Large File
+#      uses: xireiki/channel-post@v1
+#      with:
+#        bot_token: ${{ secrets.BOT_TOKEN }}
+#        chat_id: ${{ secrets.CHAT_ID }}
+#        context: OpenWrt Firmware
+#        method: sendFile
+#        path: ./bin/conf/openwrt.zip
+#        large_file: true
+#        api_id: ${{ secrets.API_ID }}
+#        api_hash: ${{ secrets.API_HASH }}
