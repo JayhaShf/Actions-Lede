@@ -98,14 +98,14 @@ jobs:
         sudo zip -rj openwrt.zip /lede/openwrt/bin/targets/*/*
         mkdir -p ./bin/conf
         sudo chmod 777 ./bin/conf
-        sudo mv -f openwrt.zip ./bin/conf/
+        sudo mv -f openwrt.zip ./bin/conf
         ls ./bin/conf
 
     - name: 上传固件
       uses: actions/upload-artifact@v4
       with:
         name: OpenWrt_firmware
-        path: ./bin/conf/*
+        path: ./bin/conf/openwrt.zip
 
 #    - name: Test Post Large File
 #      uses: xireiki/channel-post@v1
